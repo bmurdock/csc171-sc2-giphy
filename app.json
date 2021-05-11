@@ -1,0 +1,12 @@
+{
+  "name": "giphy",
+  "displayName": "giphy",
+  "expo": {
+    "name": "giphy",
+    "slug": "giphy",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

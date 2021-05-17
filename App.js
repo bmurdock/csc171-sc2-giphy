@@ -120,31 +120,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  input: {
-    borderWidth: 1,
-  },
-  myButton: {
-    alignItems: 'center',
-    padding: 5,
-    borderRadius: 5,
-    borderWidth: 1,
-  },
-  person: {
-    borderWidth: 1,
-
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-  },
-  small: {
-    width: 60,
-    height: 60,
-  },
-  medium: {
-    width: 150,
-    height: 150,
-  },
   inputContainer: {
     padding: 5,
     borderWidth: StyleSheet.hairlineWidth,

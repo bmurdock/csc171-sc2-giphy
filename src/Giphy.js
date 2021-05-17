@@ -7,3 +7,5 @@ const Giphy = (props) =>
         <View></View>
     )
 }
+// my comment and stuff
+export default Giphy;

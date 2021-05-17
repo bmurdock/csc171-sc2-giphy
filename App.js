@@ -1,5 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import DelayInput from './src/DelayInput'
+// more comments
 
 const apiKey = 'jHgFW7l3t14wto1THQuUEd9TGMTH2BWZ';
 let apiRoute = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}`
@@ -8,7 +10,6 @@ let apiRoute = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}`
 // from react native
 import { StyleSheet, Text, View, TextInput, Button, Image, TouchableHighlight } from 'react-native';
 
-const animals = ['cat', 'fish', 'dog', 'horse', 'emu', 'pig'];
 const getRando = (lb, ub) =>
 {
   return Math.floor(Math.random() * (ub + 1)) + lb;
@@ -24,132 +25,91 @@ export default class App extends React.Component {
         width: 50,
         height: 50,
       },
-      whatever: 'Some String',
+      options: [],
+      query: 'coding',
+      giphys: [],
     };
   }
 
-  changeWhatever = () =>
+  getGifs = async() =>
   {
-    this.setState({
-      whatever: "Something New",
-    });
-  }
-  // method accepts a number which
-  // represents width and height of our
-  // square image
-  imageSize = (dim) =>
-  {
-    console.log('resizing to: ', dim);
-    this.setState({
-      imgStyle: {
-        width: dim,
-        height: dim,
-      },
-    });
-  }
-
-  componentDidMount()
-  {
-    fetch(`${apiRoute}&q=coding`)
+    return await fetch(`${apiRoute}&q=${this.state.query}`)
     .then((response) =>
     {
       return response.json();
     })
     .then(({data}) =>
     {
-      console.log(data);
-      const obj = data[0];
-
       this.setState({
-        uri: obj.images.fixed_width.url,
+        options: data,
       });
     })
     .catch((err) =>
     {
-      console.log("What an amateur: ", err);
+      console.log("Could not fetch: ", err);
+    });
+  }
+  onSearchText = (text) =>
+  {
+    this.getGifs()
+    .then(() =>
+    {
+      console.log('we got the gifs');
+      this.makePicture();
     })
   }
+
+  makePicture = () =>
+  {
+    const num = this.state.options[getRando(0, this.state.options.length)];
+    console.log('num: ', num);
+    const {url, height, width} = num.images.original;
+    this.setState({
+      uri: url,
+      imgStyle: {
+        width: Number(width),
+        height: Number(height),
+      },
+    })
+  }
+
+  componentDidMount()
+  {
+    this.getGifs()
+    .then(() =>
+    {
+      this.makePicture();
+    })
+  }
+
 
   render()
   {
     return (
       <View style={styles.container}>
-        <Image
+        <View style={styles.inputContainer}>
+          <DelayInput
+            placeholder={this.state.query}
+            onSearchText={this.onSearchText}
+          />
+        </View>
+
+        <Image 
           style={this.state.imgStyle}
-          source={{uri: this.state.uri}}
+          source={{
+            uri: this.state.uri,
+          }}
         />
-        <Test
-          label="Test 1"
-          resize={this.imageSize}
-          imgStyle={this.state.imgStyle}
-          whatever={this.state.whatever}
-        />
-                <Test
-          label="Test 2"
-          resize={this.imageSize}
-          imgStyle={this.state.imgStyle}
-          changeWhatever={this.changeWhatever}
-        />
-                <Test
-          label="Test 3"
-          resize={this.imageSize}
-          imgStyle={this.state.imgStyle}
-        />
-                <Test
-          label="Not Test 4...."
-          resize={this.imageSize}
-          imgStyle={this.state.imgStyle}
-        />
+        <View style={styles.inputContainer}>
+          <Button
+            title="Refresh"
+            onPress={this.makePicture}
+          />
+        </View>
         <StatusBar style="auto" />
       </View>
-
     );
   }
-}
-
-const Test = (props) =>
-{
-
-  // create a state value called animal
-  // have a function called setAnimal that changes the value of animal
-  // the initial value of animal is the first element of my global
-  // animals array
-  const [animal, setAnimal] = React.useState(animals[0]);
-
-  const refresh = () =>
-  {
-    // i want to set animal to a random animal from my 
-    // global animals array
-    setAnimal(animals[getRando(0, animals.length -1)]);
-    console.log(typeof props.whatever);
-    if (typeof props.changeWhatever !== 'undefined')
-    {
-      props.changeWhatever();
-    }
-
-  }
-
-  console.log('image style: ', props.imgStyle);
-  return (
-    <View>
-      <Text>{props.label}</Text>
-      <Text>Animal: {animal}</Text>
-      <Text>{props.whatever}</Text>
-      <MyButton label="Press Me" onPress={refresh} />
-    </View>
-  )
-}
-
-const MyButton = (props) =>
-{
-  return(
-    <TouchableHighlight 
-      style={styles.myButton}
-      onPress={props.onPress}
-    >
-      <Text>{props.label}</Text>
-    </TouchableHighlight>
-  )
 }
 
 
@@ -159,6 +119,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  input: {
+    borderWidth: 1,
   },
   myButton: {
     alignItems: 'center',
@@ -181,5 +144,10 @@ const styles = StyleSheet.create({
   medium: {
     width: 150,
     height: 150,
+  },
+  inputContainer: {
+    padding: 5,
+    borderWidth: StyleSheet.hairlineWidth,
+    margin: 5,
   },
 });

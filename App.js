@@ -8,7 +8,7 @@ let apiRoute = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}`
 
 // These are the prebuilt components we are getting
 // from react native
-import { StyleSheet, Text, View, TextInput, Button, Image, TouchableHighlight } from 'react-native';
+import { StyleSheet, View, Button, Image,  } from 'react-native';
 
 const getRando = (lb, ub) =>
 {

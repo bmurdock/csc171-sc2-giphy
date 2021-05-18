@@ -1,5 +1,5 @@
 import React from 'react';
-import {TextInput, View} from 'react-native';
+import {TextInput} from 'react-native';
 // here we go
 
 export default class DelayInput extends React.Component{

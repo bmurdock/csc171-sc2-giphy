@@ -28,9 +28,26 @@ export default class App extends React.Component {
       options: [],
       query: 'coding',
       giphys: [],
+      globalProperty: 'https://www.google.com',
     };
   }
 
+  setGlobalProperty = (myValue) => 
+  {
+    // in the absense of strongly typed language
+    // we can verify that myValue is the correct
+    // data type before we set it
+
+    if (typeof myValue !== 'string') {
+      return "You are a bad person.";
+    }
+      this.setState({
+        globalProperty: myValue,
+      });
+  }
+
+  // download links to several images
+  // based on the current search query (stored in this.state.query);
   getGifs = async() =>
   {
     return await fetch(`${apiRoute}&q=${this.state.query}`)
@@ -49,21 +66,31 @@ export default class App extends React.Component {
       console.log("Could not fetch: ", err);
     });
   }
+  // when the user enters text
+  // set this.state.query to that text
+  // then we probably call the getGifs function again
+  // which will
+  // download links to several images
+  // based on the current search query (stored in this.state.query);
   onSearchText = (text) =>
   {
-    this.getGifs()
-    .then(() =>
-    {
-      console.log('we got the gifs');
-      this.makePicture();
-    })
+    this.setState({
+      query: text,
+    }, () => {{
+      this.getGifs()
+      .then(() =>
+      {
+        console.log('we got the gifs');
+        this.makePicture();
+      })
+    }})
   }
 
   makePicture = () =>
   {
-    const num = this.state.options[getRando(0, this.state.options.length)];
-    console.log('num: ', num);
-    const {url, height, width} = num.images.original;
+    const oneGif = this.state.options[getRando(0, this.state.options.length)];
+    console.log('oneGif: ', oneGif);
+    const {url, height, width} = oneGif.images.original;
     this.setState({
       uri: url,
       imgStyle: {
@@ -73,6 +100,9 @@ export default class App extends React.Component {
     })
   }
 
+  // this function is only for stuff
+  // that you want to do the first time
+  // the component loads
   componentDidMount()
   {
     this.getGifs()
@@ -106,10 +136,33 @@ export default class App extends React.Component {
             onPress={this.makePicture}
           />
         </View>
+        <MyComponent />
         <StatusBar style="auto" />
       </View>
     );
   }
+}
+
+function MyComponent(props) {
+  const yourOwnFunction = () => {
+    fetch(`https://www.google.com`)
+    .then(() =>{})
+    .then((data) => {{
+      props.pressyThing(data);
+    }})
+  }
+  return (
+    <View>
+      <Image
+        src={{uri: props.uri}}
+      />
+      <Button 
+      label="Press Me" 
+      onPress={yourOwnFunction} 
+      />
+  </View>
+
+  )
 }
 
 
